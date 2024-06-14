@@ -89,7 +89,7 @@ install_tmp_fixture() {
 }
 
 resolve_link() {
-  $(type -P greadlink readlink | head -1) "$1"
+  $(type -P greadlink readlink | head -n1) "$1"
 }
 
 run_inline_definition_with_name() {
@@ -200,7 +200,7 @@ OUT
   assert_success
 
   assert_build_log <<OUT
-python -s -m ensurepip
+python -I -m ensurepip
 OUT
 }
 
@@ -218,7 +218,7 @@ OUT
   assert_success
 
   assert_build_log <<OUT
-python -s -m ensurepip --altinstall
+python -I -m ensurepip --altinstall
 OUT
 }
 
@@ -325,7 +325,7 @@ EOS
   cached_tarball "Python-3.6.2"
 
   for i in {1..4}; do stub brew false; done
-  for i in {1..7}; do stub uname '-s : echo Linux'; done
+  for i in {1..8}; do stub uname '-s : echo Linux'; done
   stub "$MAKE" \
     " : echo \"$MAKE \$@\" >> build.log" \
     " : echo \"$MAKE \$@\" >> build.log && cat build.log >> '$INSTALL_ROOT/build.log'"
@@ -393,6 +393,14 @@ OUT
   assert_success
 }
 
+@test "use the custom GET_PIP_URL for 2.7 versions" {
+  run_inline_definition_with_name --name=2.7 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/2.7/get-pip.py"
+  assert_success
+}
+
 @test "use the custom GET_PIP_URL for 3.2 versions" {
   run_inline_definition_with_name --name=3.2 <<OUT
 echo "\${GET_PIP_URL}"
@@ -406,5 +414,53 @@ OUT
 echo "\${GET_PIP_URL}"
 OUT
   assert_output "https://bootstrap.pypa.io/pip/3.3/get-pip.py"
+  assert_success
+}
+
+@test "use the custom GET_PIP_URL for 3.4 versions" {
+  run_inline_definition_with_name --name=3.4 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/3.4/get-pip.py"
+  assert_success
+}
+
+@test "use the custom GET_PIP_URL for 3.5 versions" {
+  run_inline_definition_with_name --name=3.5 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/3.5/get-pip.py"
+  assert_success
+}
+
+@test "use the custom GET_PIP_URL for 3.6 versions" {
+  run_inline_definition_with_name --name=3.6 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/3.6/get-pip.py"
+  assert_success
+}
+
+@test "use the custom GET_PIP_URL for pypy2.7 versions" {
+  run_inline_definition_with_name --name=pypy2.7-7.3.12 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/2.7/get-pip.py"
+  assert_success
+}
+
+@test "use the custom GET_PIP_URL for pypy3.5 versions" {
+  run_inline_definition_with_name --name=pypy3.5-7.0.0 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/3.5/get-pip.py"
+  assert_success
+}
+
+@test "use the custom GET_PIP_URL for pypy3.6 versions" {
+  run_inline_definition_with_name --name=pypy3.6-7.3.3 <<OUT
+echo "\${GET_PIP_URL}"
+OUT
+  assert_output "https://bootstrap.pypa.io/pip/3.6/get-pip.py"
   assert_success
 }

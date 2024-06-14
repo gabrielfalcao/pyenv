@@ -69,7 +69,7 @@ DEF
   mkdir -p "$INSTALL_ROOT"
   cd "$INSTALL_ROOT"
 
-  for i in {1..9}; do stub uname '-s : echo Darwin'; done
+  for i in {1..10}; do stub uname '-s : echo Darwin'; done
   for i in {1..3}; do stub sw_vers '-productVersion : echo 10.10'; done
 
   stub cc 'false'
@@ -110,7 +110,7 @@ OUT
     mkdir -p "$INSTALL_ROOT/bin"
     cd "$INSTALL_ROOT"
 
-    stub make true true '(for a in "$@"; do echo $a; done)|grep -E "^CFLAGS_EXTRA="' true
+    stub make true '(for a in "$@"; do echo $a; done)|grep -E "^CFLAGS_EXTRA="' true
     stub ln true
     stub mkdir true
     run_inline_definition <<DEF

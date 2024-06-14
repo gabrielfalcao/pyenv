@@ -201,6 +201,7 @@ OUT
   create_version "1.218.0"
   create_executable sort <<SH
 #!$BASH
+cat >/dev/null
 if [ "\$1" == "--version-sort" ]; then
   echo "${PYENV_ROOT}/versions/1.9.0"
   echo "${PYENV_ROOT}/versions/1.53.0"
@@ -238,11 +239,13 @@ OUT
 
 @test "non-bare output shows symlink contents" {
   create_version "1.9.0"
-  create_alias "link" "foo/bar"
+  create_alias "link" "1.9.0"
 
   run pyenv-versions
-    assert_success <<OUT
+  assert_success
+  assert_output <<OUT
+* system (set by ${PYENV_ROOT}/version)
   1.9.0
-  link --> foo/bar
+  link --> 1.9.0
 OUT
 }

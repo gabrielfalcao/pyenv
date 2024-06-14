@@ -44,10 +44,11 @@ This project was forked from [rbenv](https://github.com/rbenv/rbenv) and
   * [Locating Pyenv-provided Python Installations](#locating-pyenv-provided-python-installations)
 * **[Installation](#installation)**
   * [Getting Pyenv](#getting-pyenv)
-    * [Homebrew in macOS](#homebrew-in-macos)
+    * [UNIX/MacOS](#unixmacos)
+      * [Homebrew in macOS](#homebrew-in-macos)
+      * [Automatic installer](#automatic-installer)
+      * [Basic GitHub Checkout](#basic-github-checkout)
     * [Windows](#windows)
-    * [Automatic installer](#automatic-installer)
-    * [Basic GitHub Checkout](#basic-github-checkout)
   * [Set up your shell environment for Pyenv](#set-up-your-shell-environment-for-pyenv)
   * [Restart your shell](#restart-your-shell)
   * [Install Python build dependencies](#install-python-build-dependencies)
@@ -62,6 +63,7 @@ This project was forked from [rbenv](https://github.com/rbenv/rbenv) and
   * [Upgrading with Homebrew](#upgrading-with-homebrew)
   * [Upgrading with Installer or Git checkout](#upgrading-with-installer-or-git-checkout)
 * [Uninstalling pyenv](#uninstalling-pyenv)
+* [Pyenv plugins](#pyenv-plugins)
 * [Advanced Configuration](#advanced-configuration)
   * [Using Pyenv without shims](#using-pyenv-without-shims)
   * [Environment variables](#environment-variables)
@@ -84,7 +86,7 @@ to the correct Python installation.
 
 ### Understanding PATH
 
-When you run a command like `python` or `pip`, your operating system
+When you run a command like `python` or `pip`, your shell (bash / zshrc / ...)
 searches through a list of directories to find an executable file with
 that name. This list of directories lives in an environment variable
 called `PATH`, with each directory in the list separated by a colon:
@@ -199,17 +201,23 @@ As far as Pyenv is concerned, version names are simply directories under
 ## Installation
 
 ### Getting Pyenv
-#### Homebrew in macOS
+#### UNIX/MacOS
+##### Homebrew in macOS
 
    1. Consider installing with [Homebrew](https://brew.sh):
       ```sh
       brew update
       brew install pyenv
       ```
-   2. Then follow the rest of the post-installation steps, starting with
+      If you want to install (and update to) the latest development head of Pyenv
+      rather than the latest release, instead run:
+      ```sh
+      brew install pyenv --head
+      ```
+   3. Then follow the rest of the post-installation steps, starting with
       [Set up your shell environment for Pyenv](#set-up-your-shell-environment-for-pyenv).
 
-   3. OPTIONAL. To fix `brew doctor`'s warning _""config" scripts exist outside your system or Homebrew directories"_
+   4. OPTIONAL. To fix `brew doctor`'s warning _""config" scripts exist outside your system or Homebrew directories"_
 
       If you're going to build Homebrew formulae from source that link against Python
       like Tkinter or NumPy
@@ -233,27 +241,17 @@ As far as Pyenv is concerned, version names are simply directories under
         ~~~
 
 
-#### Windows
+##### Automatic installer
 
-Pyenv does not officially support Windows and does not work in Windows outside
-the Windows Subsystem for Linux.
-Moreover, even there, the Pythons it installs are not native Windows versions
-but rather Linux versions running in a virtual machine --
-so you won't get Windows-specific functionality.
-
-If you're in Windows, we recommend using @kirankotari's [`pyenv-win`](https://github.com/pyenv-win/pyenv-win) fork --
-which does install native Windows Python versions.
-
-
-#### Automatic installer
-
-`curl https://pyenv.run | bash`
+```bash
+curl https://pyenv.run | bash
+```
 
 For more details visit our other project:
 https://github.com/pyenv/pyenv-installer
 
 
-#### Basic GitHub Checkout
+##### Basic GitHub Checkout
 
 This will get you going with the latest version of Pyenv and make it
 easy to fork and contribute any changes back upstream.
@@ -268,6 +266,18 @@ easy to fork and contribute any changes back upstream.
     ```
     cd ~/.pyenv && src/configure && make -C src
     ```
+
+#### Windows
+
+Pyenv does not officially support Windows and does not work in Windows outside
+the Windows Subsystem for Linux.
+Moreover, even there, the Pythons it installs are not native Windows versions
+but rather Linux versions running in a virtual machine --
+so you won't get Windows-specific functionality.
+
+If you're in Windows, we recommend using @kirankotari's [`pyenv-win`](https://github.com/pyenv-win/pyenv-win) fork --
+which does install native Windows Python versions.
+
 
 ### Set up your shell environment for Pyenv
 
@@ -314,14 +324,14 @@ See [Advanced configuration](#advanced-configuration) for details and more confi
     * to add to `~/.bash_profile`:
       ~~~ bash
       echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
-      echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+      echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
       echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
       ~~~
 
   - For **Zsh**:
     ~~~ zsh
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-    echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+    echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
     echo 'eval "$(pyenv init -)"' >> ~/.zshrc
     ~~~
 
@@ -401,22 +411,22 @@ You can pass options to Python's `configure` and compiler flags to customize the
 see [_Special environment variables_ in Python-Build's README](plugins/python-build/README.md#special-environment-variables)
 for details.
 
-**NOTE:** If you'd like a faster interpreter at the cost of longer build times,
-see [_Building for maximum performance_ in Python-Build's README](plugins/python-build/README.md#building-for-maximum-performance).
+**NOTE:** If you are having trouble installing a Python version,
+please visit the wiki page about
+[Common Build Problems](https://github.com/pyenv/pyenv/wiki/Common-build-problems).
 
 **NOTE:** If you want to use proxy for download, please set the `http_proxy` and `https_proxy`
 environment variables.
 
-**NOTE:** If you are having trouble installing a Python version,
-please visit the wiki page about
-[Common Build Problems](https://github.com/pyenv/pyenv/wiki/Common-build-problems).
+**NOTE:** If you'd like a faster interpreter at the cost of longer build times,
+see [_Building for maximum performance_ in Python-Build's README](plugins/python-build/README.md#building-for-maximum-performance).
 
 
 #### Prefix auto-resolution to the latest version
 
 All Pyenv subcommands except `uninstall` automatically resolve full prefixes to the latest version in the corresponding version line.
 
-`pyenv install` picks the latest known version while other subcommands -- the latest installed version.
+`pyenv install` picks the latest known version, while other subcommands pick the latest installed version.
 
 E.g. to install and then switch to the latest 3.10 release:
 
@@ -425,8 +435,7 @@ pyenv install 3.10
 pyenv global 3.10
 ```
 
-You can run [`pyenv latest <prefix>`](COMMANDS.md#pyenv-latest) to see
-what a specific prefix would be resolved to.
+You can run [`pyenv latest -k <prefix>`](COMMANDS.md#pyenv-latest) to see how `pyenv install` would resolve a specific prefix, or [`pyenv latest <prefix>`](COMMANDS.md#pyenv-latest) to see how other subcommands would resolve it.
 
 See the [`pyenv latest` documentation](COMMANDS.md#pyenv-latest) for details.
 
@@ -439,7 +448,7 @@ it's safe to assume that they will continue working until there are further inco
 in a later version of those environments.
 
 * *3.7.8-3.7.15, 3.8.4-3.8.12, 3.9.0-3.9.7* : XCode 13.3
-* *3.6.15* : MacOS 11+ and XCode 13.3
+* *3.5.10, 3.6.15* : MacOS 11+ and XCode 13.3
 * *2.7.18* : MacOS 10.15+ and Apple Silicon
 
 
@@ -500,7 +509,7 @@ If you've installed Pyenv using Homebrew, upgrade using:
 brew upgrade pyenv
 ```
 
-To switch from a release to the latest development version of Pyenv, use:
+To switch from a release to the latest development head of Pyenv, use:
 
 ```sh
 brew uninstall pyenv
@@ -567,6 +576,22 @@ uninstall from the system.
     ```
     brew uninstall pyenv
     ```
+
+
+## Pyenv plugins
+
+Pyenv provides a simple way to extend and customize its functionality with plugins --
+as simple as creating a plugin directory and dropping a shell script on a certain subpath of it
+with whatever extra logic you need to be run at certain moments.
+
+The main idea is that most things that you can put under `$PYENV_ROOT/<whatever>` you can also put
+under `$PYENV_ROOT/plugins/your_plugin_name/<whatever>`.
+
+See [_Plugins_ on the wiki](https://github.com/pyenv/pyenv/wiki/Plugins) on how to install and use plugins
+as well as a catalog of some useful existing plugins for common needs.
+
+See [_Authoring plugins_ on the wiki](https://github.com/pyenv/pyenv/wiki/Authoring-plugins) on writing your own plugins.
+
 
 ## Advanced Configuration
 
@@ -653,13 +678,11 @@ name | default | description
 `PYENV_DEBUG` | | Outputs debug information.<br>Also as: `pyenv --debug <subcommand>`
 `PYENV_HOOK_PATH` | [_see wiki_][hooks] | Colon-separated list of paths searched for pyenv hooks.
 `PYENV_DIR` | `$PWD` | Directory to start searching for `.python-version` files.
-`PYTHON_BUILD_ARIA2_OPTS` | | Used to pass additional parameters to [`aria2`](https://aria2.github.io/).<br>If the `aria2c` binary is available on `PATH`, pyenv uses `aria2c` instead of `curl` or `wget` to download the Python Source code. If you have an unstable internet connection, you can use this variable to instruct `aria2` to accelerate the download.<br>In most cases, you will only need to use `-x 10 -k 1M` as value to `PYTHON_BUILD_ARIA2_OPTS` environment variable
 
 See also [_Special environment variables_ in Python-Build's README](plugins/python-build/README.md#special-environment-variables)
 for environment variables that can be used to customize the build.
 
 ----
-
 
 ## Development
 
